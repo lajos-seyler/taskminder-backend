@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "taskminder-backend"
+version = "0.1.0"
+description = "A task management app designed to keep your daily life organized"
+authors = ["Lajos Seyler <lajos.seyler@gmail.com>"]
+license = "GNU GENERAL PUBLIC LICENSE, Version 2"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
