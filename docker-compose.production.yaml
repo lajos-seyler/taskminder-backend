@@ -1,0 +1,32 @@
+volumes:
+  production_postgres_data: {}
+
+services:
+  django:
+    build:
+      context: .
+      dockerfile: ./compose/production/django/Dockerfile
+    image: taskminder_production_django
+    container_name: taskminder_production_django
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file:
+      - ./.envs/.production/.django
+      - ./.envs/.production/.postgres
+    ports:
+      - '8000:5000'
+    command: /start
+
+  postgres:
+    image: postgres:16
+    container_name: taskminder_production_postgres
+    volumes:
+      - production_postgres_data:/var/lib/postgresql/data
+    env_file:
+      - ./.envs/.production/.postgres
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}" ]
+      interval: 3s
+      timeout: 5s
+      retries: 5

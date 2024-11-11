@@ -1,0 +1,16 @@
+# General
+# ------------------------------------------------------------------------------
+# DJANGO_READ_DOT_ENV_FILE=True
+DJANGO_SETTINGS_MODULE=config.settings.production
+DJANGO_SECRET_KEY=PFLmKGGAAwvJ3Mszfu3aXaTG2f0pU1LFPA6vHLDfxw3i8FITpSNHNJ9udv6fBj0H
+DJANGO_ADMIN_URL=QR8uO8LS0CCWRfY8Ox2E5uaj3CRxE2Z5/
+DJANGO_ALLOWED_HOSTS=example.localhost
+
+# Security
+# ------------------------------------------------------------------------------
+# TIP: better off using DNS, however, redirect is OK too
+DJANGO_SECURE_SSL_REDIRECT=False
+
+# Gunicorn
+# ------------------------------------------------------------------------------
+WEB_CONCURRENCY=4
