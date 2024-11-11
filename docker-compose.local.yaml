@@ -1,0 +1,35 @@
+volumes:
+  taskminder_local_postgres_data: {}
+  taskminder_local_redis_data: {}
+
+services:
+  django:
+    build:
+      context: .
+      dockerfile: ./compose/local/django/Dockerfile
+    image: taskminder_local_django
+    container_name: taskminder_local_django
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - .:/app:z
+    env_file:
+      - ./.envs/.local/.django
+      - ./.envs/.local/.postgres
+    ports:
+      - '8000:8000'
+    command: /start
+
+  postgres:
+    image: postgres:16
+    container_name: taskminder_local_postgres
+    volumes:
+      - taskminder_local_postgres_data:/var/lib/postgresql/data
+    env_file:
+      - ./.envs/.local/.postgres
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}" ]
+      interval: 3s
+      timeout: 5s
+      retries: 5
