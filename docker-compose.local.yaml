@@ -1,6 +1,6 @@
 volumes:
-  taskminder_local_postgres_data: {}
-  taskminder_local_redis_data: {}
+  local_postgres_data: {}
+  local_redis_data: {}
 
 services:
   django:
@@ -25,7 +25,7 @@ services:
     image: postgres:16
     container_name: taskminder_local_postgres
     volumes:
-      - taskminder_local_postgres_data:/var/lib/postgresql/data
+      - local_postgres_data:/var/lib/postgresql/data
     env_file:
       - ./.envs/.local/.postgres
     healthcheck:
