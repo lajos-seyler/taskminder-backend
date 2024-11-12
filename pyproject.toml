@@ -22,6 +22,7 @@ commitizen = "^3.30.0"
 ruff = "^0.7.3"
 pytest = "^8.3.3"
 pytest-django = "^4.9.0"
+coverage = "^7.6.4"
 
 
 [tool.commitizen]
