@@ -31,3 +31,4 @@ CACHES = {
 EMAIL_HOST = env("EMAIL_HOST", default="mailpit")
 # https://docs.djangoproject.com/en/dev/ref/settings/#email-port
 EMAIL_PORT = 1025
+DEFAULT_FROM_EMAIL = "TaskMinder <taskminder@example.com>"
