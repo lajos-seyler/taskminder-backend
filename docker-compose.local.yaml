@@ -33,3 +33,9 @@ services:
       interval: 3s
       timeout: 5s
       retries: 5
+
+  mailpit:
+    image: docker.io/axllent/mailpit:latest
+    container_name: taskminder_local_mailpit
+    ports:
+      - "8025:8025"
