@@ -1,6 +1,9 @@
+from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models, transaction
 from django.utils import timezone
+
+from .tokens import account_activation_token
 
 
 class UserManager(BaseUserManager):
@@ -52,6 +55,12 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def get_full_name(self):
         return f"{self.first_name} {self.last_name}"
+
+    def get_activation_token(self):
+        return account_activation_token.make_token(self)
+
+    def get_activation_link(self):
+        return f"{settings.FRONTEND_URL}/users/activate/{self.pk}/{self.get_activation_token()}"
 
     def __str__(self):
         return f"User username={self.username} email={self.email}"

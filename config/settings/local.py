@@ -13,6 +13,7 @@ SECRET_KEY = env(
 )
 # https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
 ALLOWED_HOSTS = ["localhost", "0.0.0.0", "127.0.0.1"]  # noqa: S104
+FRONTEND_URL = env("FRONTEND_URL", default="http://localhost:5173")
 
 # CACHES
 # ------------------------------------------------------------------------------
