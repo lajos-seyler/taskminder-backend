@@ -1,5 +1,6 @@
 volumes:
   local_postgres_data: {}
+  local_pgadmin: {}
   local_redis_data: {}
 
 services:
@@ -33,6 +34,20 @@ services:
       interval: 3s
       timeout: 5s
       retries: 5
+
+  pgadmin:
+    image: dpage/pgadmin4:8.12
+    container_name: taskminder_local_pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@pgadmin.com
+      PGADMIN_DEFAULT_PASSWORD: password
+      PGADMIN_LISTEN_PORT: 80
+    ports:
+      - 15432:80
+    volumes:
+      - local_pgadmin:/var/lib/pgadmin
+    depends_on:
+      - postgres
 
   mailpit:
     image: docker.io/axllent/mailpit:latest
