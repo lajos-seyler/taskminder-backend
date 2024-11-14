@@ -220,3 +220,50 @@ def test_token_refresh_view_with_invalid_token(drf_client):
     assert response.status_code == 401
     assert response.data["detail"] == "Token is invalid or expired"
     assert "access" not in response.data
+
+
+@pytest.mark.django_db
+def test_token_blacklist_view(drf_client, user):
+    token_url = reverse("apps.users:token_obtain_pair")
+    blacklist_url = reverse("apps.users:token_blacklist")
+    refresh_url = reverse("apps.users:token_refresh")
+
+    new_user = UserFactory.create(password=user.password)
+
+    data = {
+        "email": new_user.email,
+        "password": user.password,
+    }
+
+    response = drf_client.post(token_url, data, format="json")
+    assert response.status_code == 200
+
+    refresh_token = response.cookies.get("refresh")
+    assert refresh_token is not None
+
+    drf_client.cookies["refresh"] = refresh_token
+
+    response = drf_client.post(blacklist_url, format="json")
+    assert response.status_code == 200
+
+    # Check if cookie is deleted in response
+    response = drf_client.post(refresh_url)
+    assert response.status_code == 400
+    assert response.data["refresh"][0] == "This field may not be blank."
+
+    # Check if re-using the same refresh token is not possible
+    drf_client.cookies["refresh"] = refresh_token
+    response = drf_client.post(refresh_url)
+    assert response.status_code == 401
+    assert response.data["detail"] == "Token is blacklisted"
+
+
+@pytest.mark.django_db
+def test_token_blacklist_view_with_invalid_token(drf_client):
+    blacklist_url = reverse("apps.users:token_blacklist")
+
+    drf_client.cookies["refresh"] = "invalid_token"
+
+    response = drf_client.post(blacklist_url, format="json")
+    assert response.status_code == 401
+    assert response.data["detail"] == "Token is invalid or expired"
