@@ -13,4 +13,5 @@ urlpatterns = [
     path("users/activate/<uuid>/<token>/", views.UserActivateView.as_view(), name="activate"),
     path("token", views.TokenObtainPairView().as_view(), name="token_obtain_pair"),
     path("token/refresh", views.TokenRefreshView().as_view(), name="token_refresh"),
+    path("token/blacklist/", views.TokenBlacklistView.as_view(), name="token_blacklist"),
 ]
