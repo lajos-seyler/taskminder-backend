@@ -1,3 +1,5 @@
+import uuid
+
 from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models, transaction
@@ -43,6 +45,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["username"]
 
+    uuid = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
     username = models.CharField(unique=True, max_length=50)
     email = models.EmailField(blank=False, unique=True)
     first_name = models.CharField(blank=True, max_length=128)
