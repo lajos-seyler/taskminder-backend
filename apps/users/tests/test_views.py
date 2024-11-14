@@ -172,3 +172,51 @@ def test_token_obtain_pair_view_invalid_credentials(drf_client):
     assert response.status_code == 401
     assert "access" not in response.data
     assert response.data["detail"] == "No active account found with the given credentials"
+
+
+@pytest.mark.django_db
+def test_token_refresh_view(drf_client, user):
+    new_user = UserFactory.create(password=user.password)
+
+    url = "/api/token/"
+    refresh_url = reverse("apps.users:token_refresh")
+
+    data = {
+        "email": new_user.email,
+        "password": user.password,
+    }
+
+    response = drf_client.post(url, data, format="json")
+    assert response.status_code == 200
+
+    refresh_token = response.cookies.get("refresh")
+    assert refresh_token is not None
+
+    drf_client.cookies["refresh"] = refresh_token
+
+    response = drf_client.post(refresh_url)
+
+    assert response.status_code == 200
+    assert "access" in response.data
+
+
+@pytest.mark.django_db
+def test_token_refresh_view_no_token(drf_client, user):
+    refresh_url = reverse("apps.users:token_refresh")
+    response = drf_client.post(refresh_url)
+
+    assert response.status_code == 400
+    assert response.data["refresh"][0] == "This field may not be null."
+    assert "access" not in response.data
+
+
+@pytest.mark.django_db
+def test_token_refresh_view_with_invalid_token(drf_client):
+    refresh_url = reverse("apps.users:token_refresh")
+
+    drf_client.cookies["refresh"] = "invalid_token"
+    response = drf_client.post(refresh_url)
+
+    assert response.status_code == 401
+    assert response.data["detail"] == "Token is invalid or expired"
+    assert "access" not in response.data
