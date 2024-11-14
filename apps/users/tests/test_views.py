@@ -136,3 +136,39 @@ def test_user_activate_view_invalid_token(drf_client):
     assert response.status_code == 400
     assert response.data["message"] == "Invalid or expired activation token."
     assert registered_user.is_active is False
+
+
+@pytest.mark.django_db
+def test_token_obtain_pair_view(drf_client, user):
+    new_user = UserFactory.create()
+    new_user.set_password(user.password)
+    new_user.save()
+
+    url = "/api/token/"
+
+    data = {
+        "email": new_user.email,
+        "password": user.password,
+    }
+
+    response = drf_client.post(url, data, format="json")
+
+    assert response.status_code == 200
+    assert "access" in response.data
+    assert "refresh" not in response.data
+
+
+@pytest.mark.django_db
+def test_token_obtain_pair_view_invalid_credentials(drf_client):
+    url = "/api/token/"
+
+    data = {
+        "email": "invalid@example.com",
+        "password": "password123",
+    }
+
+    response = drf_client.post(url, data, format="json")
+
+    assert response.status_code == 401
+    assert "access" not in response.data
+    assert response.data["detail"] == "No active account found with the given credentials"
