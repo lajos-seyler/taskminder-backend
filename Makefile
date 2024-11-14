@@ -85,6 +85,9 @@ endif
 test:
 	@docker compose -f docker-compose.local.yaml run --rm django pytest
 
+testk:
+	@docker compose -f docker-compose.local.yaml run --rm django pytest -k $(k)
+
 # Command to run pytest with coverage for test coverage analysis
 coverage:
 	@docker compose -f docker-compose.local.yaml run --rm django coverage run -m pytest
