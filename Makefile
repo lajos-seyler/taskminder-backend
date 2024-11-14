@@ -73,9 +73,9 @@ endif
 # Command to run Django shell with the appropriate docker-compose file
 shell:
 ifeq ($(ENV),local)
-	@docker compose -f docker-compose.local.yaml run --rm django python manage.py shell
+	@docker compose -f docker-compose.local.yaml run --rm django bash
 else ifeq ($(ENV),prod)
-	@docker compose -f docker-compose.production.yaml run --rm django python manage.py shell
+	@docker compose -f docker-compose.production.yaml run --rm django bash
 else
 	@echo "Invalid ENV value! Please specify ENV=local or ENV=prod."
 	exit 1
