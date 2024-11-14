@@ -92,3 +92,7 @@ coverage:
 # Command to generate and display a test coverage report
 coverage-report:
 	@docker compose -f docker-compose.local.yaml run --rm django coverage report
+
+# Command to generate a test coverage report in HTML format
+coverage-html:
+	@docker compose -f docker-compose.local.yaml run --rm django coverage html
