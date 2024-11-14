@@ -18,3 +18,14 @@ class UserFactory(DjangoModelFactory):
 
     class Meta:
         model = User
+
+    @classmethod
+    def _create(cls, model_class, *args, **kwargs):
+        password = kwargs.pop("password", None)
+        user = super()._create(model_class, *args, **kwargs)
+
+        if password:
+            user.set_password(password)
+            user.save()
+
+        return user
