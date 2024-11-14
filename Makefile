@@ -73,9 +73,9 @@ endif
 # Command to run Django shell with the appropriate docker-compose file
 shell:
 ifeq ($(ENV),local)
-	@docker compose -f docker-compose.local.yaml run --rm django python manage.py shell
+	@docker compose -f docker-compose.local.yaml run --rm django bash
 else ifeq ($(ENV),prod)
-	@docker compose -f docker-compose.production.yaml run --rm django python manage.py shell
+	@docker compose -f docker-compose.production.yaml run --rm django bash
 else
 	@echo "Invalid ENV value! Please specify ENV=local or ENV=prod."
 	exit 1
@@ -85,6 +85,9 @@ endif
 test:
 	@docker compose -f docker-compose.local.yaml run --rm django pytest
 
+testk:
+	@docker compose -f docker-compose.local.yaml run --rm django pytest -k $(k)
+
 # Command to run pytest with coverage for test coverage analysis
 coverage:
 	@docker compose -f docker-compose.local.yaml run --rm django coverage run -m pytest
@@ -92,3 +95,7 @@ coverage:
 # Command to generate and display a test coverage report
 coverage-report:
 	@docker compose -f docker-compose.local.yaml run --rm django coverage report
+
+# Command to generate a test coverage report in HTML format
+coverage-html:
+	@docker compose -f docker-compose.local.yaml run --rm django coverage html

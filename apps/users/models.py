@@ -1,6 +1,11 @@
+import uuid
+
+from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models, transaction
 from django.utils import timezone
+
+from .tokens import account_activation_token
 
 
 class UserManager(BaseUserManager):
@@ -40,6 +45,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["username"]
 
+    uuid = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
     username = models.CharField(unique=True, max_length=50)
     email = models.EmailField(blank=False, unique=True)
     first_name = models.CharField(blank=True, max_length=128)
@@ -52,6 +58,20 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def get_full_name(self):
         return f"{self.first_name} {self.last_name}"
+
+    def get_activation_token(self):
+        return account_activation_token.make_token(self)
+
+    def activate(self, token):
+        if account_activation_token.check_token(self, token):
+            self.is_active = True
+            self.save()
+            return True
+        else:
+            return False
+
+    def get_activation_link(self):
+        return f"{settings.FRONTEND_URL}/users/activate/{self.uuid}/{self.get_activation_token()}"
 
     def __str__(self):
         return f"User username={self.username} email={self.email}"

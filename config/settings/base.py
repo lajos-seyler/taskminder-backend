@@ -25,6 +25,7 @@ USE_I18N = True
 # https://docs.djangoproject.com/en/dev/ref/settings/#use-tz
 USE_TZ = True
 
+FRONTEND_URL = env("FRONTEND_URL", default="http://localhost:5173")
 
 # DATABASES
 # ------------------------------------------------------------------------------
@@ -52,9 +53,14 @@ DJANGO_APPS = [
     "django.contrib.staticfiles",
 ]
 
-THIRD_PARTY_APPS = []
+THIRD_PARTY_APPS = [
+    "rest_framework",
+    "rest_framework_simplejwt",
+    "rest_framework_simplejwt.token_blacklist",
+]
 
 LOCAL_APPS = [
+    "apps.admin_logs",
     "apps.users",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -173,4 +179,8 @@ LOGGING = {
         },
     },
     "root": {"level": "INFO", "handlers": ["console"]},
+}
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": ("rest_framework_simplejwt.authentication.JWTAuthentication",),
 }

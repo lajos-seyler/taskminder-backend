@@ -14,6 +14,10 @@ psycopg = { extras = ["binary"], version = "^3.2.3" }
 gunicorn = "^23.0.0"
 uvicorn = { extras = ["standard"], version = "^0.32.0" }
 uvicorn-worker = "^0.2.0"
+djangorestframework = "^3.15.2"
+markdown = "^3.7"
+django-filter = "^24.3"
+djangorestframework-simplejwt = "^5.3.1"
 
 
 [tool.poetry.group.dev.dependencies]
@@ -23,6 +27,9 @@ ruff = "^0.7.3"
 pytest = "^8.3.3"
 pytest-django = "^4.9.0"
 coverage = "^7.6.4"
+django-debug-toolbar = "^4.4.6"
+factory-boy = "^3.3.1"
+faker = "^33.0.0"
 
 
 [tool.commitizen]
@@ -114,3 +121,7 @@ docstring-code-line-length = "dynamic"
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "config.settings.test"
+
+[tool.coverage.run]
+source = ["apps"]
+omit = ["*/migrations/*", "*/tests/*"]
