@@ -10,4 +10,5 @@ router.register("register", views.UserRegistrationViewSet, basename="register")
 
 urlpatterns = [
     path("", include(router.urls)),
+    path("users/activate/<uuid>/<token>/", views.UserActivateView.as_view(), name="activate"),
 ]

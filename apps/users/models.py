@@ -62,6 +62,14 @@ class User(AbstractBaseUser, PermissionsMixin):
     def get_activation_token(self):
         return account_activation_token.make_token(self)
 
+    def activate(self, token):
+        if account_activation_token.check_token(self, token):
+            self.is_active = True
+            self.save()
+            return True
+        else:
+            return False
+
     def get_activation_link(self):
         return f"{settings.FRONTEND_URL}/users/activate/{self.uuid}/{self.get_activation_token()}"
 
