@@ -63,7 +63,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         return account_activation_token.make_token(self)
 
     def get_activation_link(self):
-        return f"{settings.FRONTEND_URL}/users/activate/{self.pk}/{self.get_activation_token()}"
+        return f"{settings.FRONTEND_URL}/users/activate/{self.uuid}/{self.get_activation_token()}"
 
     def __str__(self):
         return f"User username={self.username} email={self.email}"
