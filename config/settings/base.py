@@ -26,6 +26,7 @@ USE_I18N = True
 USE_TZ = True
 
 FRONTEND_URL = env("FRONTEND_URL", default="http://localhost:5173")
+CORS_ALLOWED_ORIGINS = [FRONTEND_URL]
 
 # DATABASES
 # ------------------------------------------------------------------------------
@@ -54,6 +55,7 @@ DJANGO_APPS = [
 ]
 
 THIRD_PARTY_APPS = [
+    "corsheaders",
     "rest_framework",
     "rest_framework_simplejwt",
     "rest_framework_simplejwt.token_blacklist",
@@ -96,6 +98,7 @@ AUTH_PASSWORD_VALIDATORS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
