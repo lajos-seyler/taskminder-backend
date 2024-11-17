@@ -1,5 +1,6 @@
 from django.shortcuts import get_object_or_404
-from rest_framework import status
+from rest_framework import mixins, status, viewsets
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
@@ -9,13 +10,13 @@ from rest_framework_simplejwt.views import TokenObtainPairView as DefaultTokenOb
 from rest_framework_simplejwt.views import TokenRefreshView as DefaultTokenRefreshView
 
 from .models import User
-from .serializers import TokenObtainPairSerializer, UserRegistrationSerializer
+from .serializers import TokenObtainPairSerializer, UserSerializer
 from .utils import send_registration_email
 
 
 class UserRegistrationViewSet(ModelViewSet):
     queryset = User.objects.all()
-    serializer_class = UserRegistrationSerializer
+    serializer_class = UserSerializer
     permission_classes = []
     http_method_names = ["post"]
 
@@ -74,3 +75,13 @@ class TokenBlacklistView(DefaultTokenBlacklistView):
         response = Response(serializer.validated_data, status=status.HTTP_200_OK)
         response.delete_cookie("refresh")
         return response
+
+
+class CurrentUserRetrieveUpdateViewSet(mixins.UpdateModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+    """User retrieve and update viewsets for the current user"""
+
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user
