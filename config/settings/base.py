@@ -27,6 +27,7 @@ USE_TZ = True
 
 FRONTEND_URL = env("FRONTEND_URL", default="http://localhost:5173")
 CORS_ALLOWED_ORIGINS = [FRONTEND_URL]
+CORS_ALLOW_CREDENTIALS = True
 
 # DATABASES
 # ------------------------------------------------------------------------------

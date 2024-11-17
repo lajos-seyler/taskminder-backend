@@ -1,0 +1,6 @@
+{
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "always",
+    "source.organizeImports.ruff": "always"
+  }
+}
