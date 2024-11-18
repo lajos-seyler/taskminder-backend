@@ -5,13 +5,13 @@ from apps.users.factories import UserFactory
 
 
 @pytest.fixture
-def user(db):  # noqa: ARG001
+def user():
     """Creates a user"""
     return UserFactory.create()
 
 
 @pytest.fixture
-def drf_client(user):
+def drf_client():
     """DRF API test client that not authenticated with a user"""
     return APIClient()
 
