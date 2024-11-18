@@ -74,4 +74,4 @@ class User(AbstractBaseUser, PermissionsMixin):
         return f"{settings.FRONTEND_URL}/users/activate/{self.uuid}/{self.get_activation_token()}"
 
     def __str__(self):
-        return f"User username={self.username} email={self.email}"
+        return f"User (username={self.username}, email={self.email})"

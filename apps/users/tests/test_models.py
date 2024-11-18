@@ -1,6 +1,7 @@
 import pytest
 from django.db import transaction
 
+from apps.users.factories import UserFactory
 from apps.users.models import User
 
 pytestmark = pytest.mark.django_db
@@ -34,3 +35,9 @@ def test_create_user(create_func, exp_staff, exp_superuser, exp_is_active, passw
 
     if password is not None:
         assert user.check_password(password)
+
+
+def test_user_str_representation():
+    user = UserFactory()
+
+    assert str(user) == f"User (username={user.username}, email={user.email})"
