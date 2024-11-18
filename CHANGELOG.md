@@ -1,3 +1,10 @@
+## 0.5.0 (2024-11-18)
+
+### Feat
+
+- add users/me API
+- add CORS_ALLOWED_ORIGINS to settings
+
 ## 0.4.0 (2024-11-14)
 
 ### Feat

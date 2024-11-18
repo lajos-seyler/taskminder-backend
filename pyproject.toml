@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "taskminder-backend"
-version = "0.4.0"
+version = "0.5.0"
 description = "A task management app designed to keep your daily life organized"
 authors = ["Lajos Seyler <lajos.seyler@gmail.com>"]
 license = "GNU GENERAL PUBLIC LICENSE, Version 2"
