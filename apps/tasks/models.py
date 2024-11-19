@@ -85,4 +85,4 @@ class Occurrence(models.Model):
     task = models.ForeignKey(Task, related_name="occurrences", editable=False, on_delete=models.CASCADE)
 
     def __str__(self):
-        return "{}: {}".format(self.event.title, self.start_time)
+        return f"{self.task.title}: {self.start_time}"

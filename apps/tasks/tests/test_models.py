@@ -1,6 +1,6 @@
 import pytest
 
-from apps.tasks.factories import FolderFactory, ProjectFactory, TagFactory, TaskFactory
+from apps.tasks.factories import FolderFactory, OccurrenceFactory, ProjectFactory, TagFactory, TaskFactory
 
 pytestmark = pytest.mark.django_db
 
@@ -30,3 +30,9 @@ def test_tag_str_representation():
     tag = TagFactory()
 
     assert str(tag) == tag.name
+
+
+def test_occurrence_str_representation():
+    occurrence = OccurrenceFactory()
+
+    assert str(occurrence) == f"{occurrence.task.title}: {occurrence.start_time}"

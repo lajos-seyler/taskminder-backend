@@ -1,6 +1,7 @@
-from datetime import timezone
+from datetime import timedelta, timezone
 
 import factory
+import faker
 from factory.django import DjangoModelFactory
 
 from apps.users.factories import UserFactory
@@ -60,5 +61,5 @@ class OccurrenceFactory(DjangoModelFactory):
         model = Occurrence
 
     start_time = factory.Faker("date_time", tzinfo=timezone.utc)
-    end_time = factory.LazyAttribute(lambda obj: obj.start_time + factory.Faker("time_delta").generate())
+    end_time = factory.LazyAttribute(lambda o: o.start_time + timedelta(hours=faker.Faker().random_int(min=1, max=5)))
     task = factory.SubFactory(TaskFactory)
