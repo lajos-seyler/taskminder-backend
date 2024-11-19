@@ -36,6 +36,7 @@ class ProjectFactory(DjangoModelFactory):
 class TaskFactory(DjangoModelFactory):
     class Meta:
         model = Task
+        skip_postgeneration_save = True
 
     title = factory.Faker("sentence", nb_words=4)
     text = factory.Faker("paragraph")
