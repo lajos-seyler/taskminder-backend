@@ -47,14 +47,16 @@ class Task(models.Model):
     project = models.ForeignKey(Project, related_name="tasks", null=True, blank=True, on_delete=models.SET_NULL)
     owner = models.ForeignKey(User, related_name="tasks", on_delete=models.CASCADE)
 
+    def __str__(self):
+        return f"{self.title} (id={self.id})"
+
     def clean(self):
         if self.project and self.folder:
             raise ValidationError("A Task cannot be linked to both a Project and a Folder.")
-        if not self.project and not self.folder:
-            raise ValidationError("A Task must be linked to either a Project or a Folder.")
 
-    def __str__(self):
-        return f"{self.title} (id={self.id})"
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
 
     def add_occurrences(self, start_time, end_time, **rrule_params):
         start_time = start_time.replace(tzinfo=timezone.utc)
