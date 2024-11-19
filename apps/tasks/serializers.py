@@ -1,3 +1,4 @@
+from dateutil import rrule
 from rest_framework import serializers
 
 from .models import Folder, Project, Tag, Task
@@ -33,6 +34,10 @@ class ProjectSerializer(serializers.ModelSerializer):
 class TaskSerializer(serializers.ModelSerializer):
     owner = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
+    start_time = serializers.DateTimeField(write_only=True, required=False)
+    end_time = serializers.DateTimeField(write_only=True, required=False)
+    rrule_params = serializers.JSONField(write_only=True, required=False)
+
     class Meta:
         model = Task
         fields = "__all__"
@@ -47,3 +52,24 @@ class TaskSerializer(serializers.ModelSerializer):
             self.Meta.depth = 0
         else:
             self.Meta.depth = 1
+
+    def create(self, validated_data):
+        start_time = validated_data.pop("start_time", None)
+        end_time = validated_data.pop("end_time", None)
+        rrule_params = validated_data.pop("rrule_params", {})
+
+        task = super().create(validated_data)
+
+        if start_time and end_time:
+            self.parse_frequency(rrule_params=rrule_params)
+            try:
+                task.add_occurrences(start_time=start_time, end_time=end_time, **rrule_params)
+            except Exception as e:
+                raise serializers.ValidationError({"rrule_params": f"Invalid recurrence rule parameters: {e}"})
+
+        return task
+
+    def parse_frequency(self, rrule_params):
+        frequency_str = rrule_params.get("freq")
+        freq = getattr(rrule, frequency_str)
+        rrule_params["freq"] = freq
