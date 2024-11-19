@@ -41,10 +41,6 @@ class TaskFactory(DjangoModelFactory):
 
     title = factory.Faker("sentence", nb_words=4)
     text = factory.Faker("paragraph")
-    folder = factory.Maybe(factory.Faker("boolean", chance_of_getting_true=50), factory.SubFactory(FolderFactory), None)
-    project = factory.Maybe(
-        factory.Faker("boolean", chance_of_getting_true=50), factory.SubFactory(ProjectFactory), None
-    )
     owner = factory.SubFactory(UserFactory)
 
     @factory.post_generation
@@ -54,6 +50,23 @@ class TaskFactory(DjangoModelFactory):
         if extracted:
             for tag in extracted:
                 self.tags.add(tag)
+
+    @factory.post_generation
+    def set_folder_or_project(obj, create, extracted, **kwargs):
+        if not create:
+            return
+
+        faker = factory.Faker._get_faker()
+        choice = faker.random_element(elements=["project", "folder", None])
+
+        if choice == "project":
+            obj.project = ProjectFactory()
+        elif choice == "folder":
+            obj.folder = FolderFactory()
+
+        obj.save()
+
+    owner = factory.SubFactory(UserFactory)
 
 
 class OccurrenceFactory(DjangoModelFactory):
