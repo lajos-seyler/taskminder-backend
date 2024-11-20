@@ -71,5 +71,6 @@ class TaskSerializer(serializers.ModelSerializer):
 
     def parse_frequency(self, rrule_params):
         frequency_str = rrule_params.get("freq")
-        freq = getattr(rrule, frequency_str)
-        rrule_params["freq"] = freq
+        if frequency_str:
+            freq = getattr(rrule, frequency_str)
+            rrule_params["freq"] = freq
