@@ -1,3 +1,17 @@
+## 0.6.0 (2024-11-22)
+
+### Feat
+
+- add LimitOffsetPagination as default pagination class
+- handle rrule_params in TaskSerializer
+- add tasks, folders, projects and tags APIs
+
+### Fix
+
+- error in parse_frequency if freq is not in POST data
+- enforce validation on Task model
+- str representation of Occurrence model
+
 ## 0.5.0 (2024-11-18)
 
 ### Feat
