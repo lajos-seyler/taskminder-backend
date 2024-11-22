@@ -21,7 +21,8 @@ def test_get_folders(user, user_drf_client):
     response = user_drf_client.get(FOLDERS_URL)
 
     assert response.status_code == 200
-    assert len(response.data) == 3
+    print(response.data)
+    assert len(response.data["results"]) == 3
 
 
 def test_post_folder(user, user_drf_client):

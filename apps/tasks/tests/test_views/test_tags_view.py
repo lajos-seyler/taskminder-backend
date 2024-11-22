@@ -21,7 +21,7 @@ def test_get_tags(user, user_drf_client):
     response = user_drf_client.get(TAGS_URL)
 
     assert response.status_code == 200
-    assert len(response.data) == 3
+    assert len(response.data["results"]) == 3
 
 
 def test_post_tag(user, user_drf_client):
