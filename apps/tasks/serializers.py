@@ -55,9 +55,9 @@ class TaskSerializer(serializers.ModelSerializer):
     start_time = serializers.DateTimeField(write_only=True, required=False)
     end_time = serializers.DateTimeField(write_only=True, required=False)
     rrule_params = serializers.JSONField(write_only=True, required=False)
-    next_occurence = serializers.SerializerMethodField(read_only=True)
+    next_occurrence = serializers.SerializerMethodField(read_only=True)
 
-    def get_next_occurence(self, obj):
+    def get_next_occurrence(self, obj):
         future_occurrences = obj.occurrences.filter(start_time__gt=timezone.now())
         if future_occurrences.exists():
             return OccurrenceSerializer(future_occurrences.earliest("start_time")).data
