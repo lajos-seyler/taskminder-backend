@@ -1,7 +1,8 @@
 from dateutil import rrule
+from django.utils import timezone
 from rest_framework import serializers
 
-from .models import Folder, Project, Tag, Task
+from .models import Folder, Occurrence, Project, Tag, Task
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -31,12 +32,26 @@ class ProjectSerializer(serializers.ModelSerializer):
         read_only_fields = ("id",)
 
 
+class OccurrenceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Occurrence
+        fields = "__all__"
+        read_only_fields = ("id",)
+
+
 class TaskSerializer(serializers.ModelSerializer):
     owner = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     start_time = serializers.DateTimeField(write_only=True, required=False)
     end_time = serializers.DateTimeField(write_only=True, required=False)
     rrule_params = serializers.JSONField(write_only=True, required=False)
+    next_occurence = serializers.SerializerMethodField(read_only=True)
+
+    def get_next_occurence(self, obj):
+        future_occurrences = obj.occurrences.filter(start_time__gt=timezone.now())
+        if future_occurrences.exists():
+            return OccurrenceSerializer(future_occurrences.earliest("start_time")).data
+        return None
 
     class Meta:
         model = Task
