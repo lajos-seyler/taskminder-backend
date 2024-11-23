@@ -84,6 +84,22 @@ class TaskSerializer(serializers.ModelSerializer):
 
         return task
 
+    def update(self, instance, validated_data):
+        request = self.context.get("request")
+        if request:
+            project = request.data.get("project", None)
+            instance.project_id = project
+
+            tags = request.data.get("tags", None)
+            if tags is not None:
+                instance.tags.set(tags)
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+
+        instance.save()
+        return instance
+
     def parse_frequency(self, rrule_params):
         frequency_str = rrule_params.get("freq")
         if frequency_str:
