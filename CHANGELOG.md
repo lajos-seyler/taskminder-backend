@@ -1,3 +1,10 @@
+## 0.7.0 (2024-11-24)
+
+### Feat
+
+- handle project and tags update in TaskSerializer
+- add next_occurrence field to TaskSerializer
+
 ## 0.6.0 (2024-11-22)
 
 ### Feat
