@@ -1,7 +1,8 @@
 from dateutil import rrule
+from django.utils import timezone
 from rest_framework import serializers
 
-from .models import Folder, Project, Tag, Task
+from .models import Folder, Occurrence, Project, Tag, Task
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -30,6 +31,23 @@ class ProjectSerializer(serializers.ModelSerializer):
         fields = "__all__"
         read_only_fields = ("id",)
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        request = self.context.get("request")
+
+        if request and request.method == "POST":
+            self.Meta.depth = 0
+        else:
+            self.Meta.depth = 1
+
+
+class OccurrenceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Occurrence
+        fields = "__all__"
+        read_only_fields = ("id",)
+
 
 class TaskSerializer(serializers.ModelSerializer):
     owner = serializers.HiddenField(default=serializers.CurrentUserDefault())
@@ -37,6 +55,13 @@ class TaskSerializer(serializers.ModelSerializer):
     start_time = serializers.DateTimeField(write_only=True, required=False)
     end_time = serializers.DateTimeField(write_only=True, required=False)
     rrule_params = serializers.JSONField(write_only=True, required=False)
+    next_occurrence = serializers.SerializerMethodField(read_only=True)
+
+    def get_next_occurrence(self, obj):
+        future_occurrences = obj.occurrences.filter(start_time__gt=timezone.now())
+        if future_occurrences.exists():
+            return OccurrenceSerializer(future_occurrences.earliest("start_time")).data
+        return None
 
     class Meta:
         model = Task
@@ -68,6 +93,22 @@ class TaskSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError({"rrule_params": f"Invalid recurrence rule parameters: {e}"})
 
         return task
+
+    def update(self, instance, validated_data):
+        request = self.context.get("request")
+        if request:
+            project = request.data.get("project", None)
+            instance.project_id = project
+
+            tags = request.data.get("tags", None)
+            if tags is not None:
+                instance.tags.set(tags)
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+
+        instance.save()
+        return instance
 
     def parse_frequency(self, rrule_params):
         frequency_str = rrule_params.get("freq")

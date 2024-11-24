@@ -11,6 +11,10 @@ pytestmark = pytest.mark.django_db
 TASKS_URL = reverse("apps.tasks:tasks-list")
 
 
+def get_detail_url(id):
+    return reverse("apps.tasks:tasks-detail", kwargs={"pk": id})
+
+
 def test_get_tasks(user, user_drf_client):
     other_user = UserFactory()
 
@@ -87,3 +91,30 @@ def test_post_task_with_rrule_params(user, user_drf_client, rrule_params, expect
     task = user.tasks.filter(pk=response.data["id"])
     assert task.exists() is True
     assert task[0].occurrences.count() == expected_occurrences_count
+
+
+def test_patch_task(user, user_drf_client):
+    task = TaskFactory(owner=user)
+    task.folder = None
+    task.save()
+
+    new_project = ProjectFactory(owner=user)
+    new_tags = TagFactory.create_batch(3, owner=user)
+    new_tag_ids = [tag.id for tag in new_tags]
+
+    patched_data = {
+        "title": "updated title",
+        "text": "updated text",
+        "project": new_project.id,
+        "tags": new_tag_ids,
+    }
+
+    response = user_drf_client.patch(get_detail_url(task.id), patched_data, format="json")
+
+    assert response.status_code == 200
+    assert response.data["title"] == "updated title"
+    assert response.data["text"] == "updated text"
+    assert response.data["project"]["id"] == new_project.id
+
+    tag_ids_in_response = [tag["id"] for tag in response.data["tags"]]
+    assert tag_ids_in_response == new_tag_ids
