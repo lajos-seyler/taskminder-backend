@@ -1,3 +1,9 @@
+## 0.7.1 (2024-11-26)
+
+### Fix
+
+- parse "until" field of rrule_params from string to datetime obj
+
 ## 0.7.0 (2024-11-24)
 
 ### Feat
