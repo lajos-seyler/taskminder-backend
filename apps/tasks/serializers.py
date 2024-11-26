@@ -1,3 +1,6 @@
+from datetime import datetime, timedelta
+from datetime import timezone as dt_timezone
+
 from dateutil import rrule
 from django.utils import timezone
 from rest_framework import serializers
@@ -87,6 +90,7 @@ class TaskSerializer(serializers.ModelSerializer):
 
         if start_time and end_time:
             self.parse_frequency(rrule_params=rrule_params)
+            self.parse_until(rrule_params=rrule_params)
             try:
                 task.add_occurrences(start_time=start_time, end_time=end_time, **rrule_params)
             except Exception as e:
@@ -115,3 +119,12 @@ class TaskSerializer(serializers.ModelSerializer):
         if frequency_str:
             freq = getattr(rrule, frequency_str)
             rrule_params["freq"] = freq
+
+    def parse_until(self, rrule_params):
+        until_str = rrule_params.get("until")
+        if until_str:
+            until_datetime = datetime.strptime(until_str, "%Y-%m-%d")
+
+            next_day = until_datetime + timedelta(days=1)
+            next_day_midnight = next_day.replace(hour=0, minute=0, second=0, microsecond=0, tzinfo=dt_timezone.utc)
+            rrule_params["until"] = next_day_midnight
